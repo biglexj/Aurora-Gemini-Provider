@@ -1,0 +1,16 @@
+[Unit]
+Description=Aurora Gemini Image Provider
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Proyectos/Aurora-Gemini-Provider
+ExecStart=/usr/bin/node scripts/provider.mjs 54800
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=AGY_BINARY=%h/.local/bin/agy
+UMask=0077
+
+[Install]
+WantedBy=default.target

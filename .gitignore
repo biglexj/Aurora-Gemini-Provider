@@ -1,0 +1,9 @@
+node_modules/
+data/
+generated/
+.env
+.env.*
+*.log
+AuroraGeminiProvider.exe
+.DS_Store
+Thumbs.db
