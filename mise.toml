@@ -1,0 +1,19 @@
+[tasks.dev]
+description = "Inicia el servidor Aurora Gemini Provider en modo desarrollo"
+run = "bun run scripts/mise-task.ts dev"
+raw_args = true
+
+[tasks.build]
+description = "Comprueba sintaxis y coherencia sin empaquetar"
+run = "bun run scripts/mise-task.ts build"
+raw_args = true
+
+[tasks.release]
+description = "Prepara el entorno y dependencias para distribución local"
+run = "bun run scripts/mise-task.ts release"
+raw_args = true
+
+[tasks.publish]
+description = "Verifica y gestiona publicación en GitHub Releases"
+run = "bun run scripts/mise-task.ts publish"
+raw_args = true

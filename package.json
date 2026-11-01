@@ -7,6 +7,8 @@
   "scripts": {
     "start": "node scripts/provider.mjs",
     "dev": "node scripts/provider.mjs",
+    "build": "bun run scripts/mise-task.ts build",
+    "release": "bun run scripts/mise-task.ts release",
     "check": "node --check scripts/provider.mjs"
   },
   "dependencies": {

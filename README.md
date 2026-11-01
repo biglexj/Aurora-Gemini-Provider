@@ -32,6 +32,17 @@ Aprovecha la sesión autenticada existente en este equipo o en el servidor Linux
 npm install
 ```
 
+### Tareas del proyecto (Mise)
+El proyecto implementa la interfaz común del ecosistema Biglex:
+- `mise dev`: Inicia el servidor de desarrollo (`node scripts/provider.mjs 54800`).
+- `mise build`: Comprobación de sintaxis de los scripts (`node --check`).
+- `mise release`: Preparación y verificación local de dependencias.
+- `mise publish`: Verificación de requisitos de publicación en GitHub Releases (`--check` / `--plan`).
+
+Opciones comunes:
+- `--plan`: Simula la ejecución sin realizar cambios.
+- `--check`: Verificación en modo sólo lectura previa a la publicación.
+
 ### Ejecución en Windows
 1. Haz doble clic en `Iniciar.cmd` o ejecuta en la terminal:
    ```powershell
