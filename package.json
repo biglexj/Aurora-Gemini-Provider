@@ -7,7 +7,11 @@
   "scripts": {
     "start": "node scripts/provider.mjs",
     "dev": "node scripts/provider.mjs",
-    "check": "node --check scripts/provider.mjs"
+    "build": "bun run scripts/mise-task.ts build",
+    "check": "bun run scripts/mise-task.ts check",
+    "test": "bun run scripts/mise-task.ts test",
+    "release": "bun run scripts/mise-task.ts release",
+    "publish": "bun run scripts/mise-task.ts publish"
   },
   "dependencies": {
     "sharp": "^0.35.5"

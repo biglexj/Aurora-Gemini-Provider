@@ -5,6 +5,9 @@ import path from 'node:path';
 const directory = process.env.LOCAL_IMAGE_DATA_DIR ? path.resolve(process.env.LOCAL_IMAGE_DATA_DIR) : fileURLToPath(new URL('../data/', import.meta.url));
 const filename = path.join(directory, 'provider-config.json');
 
+// Puerto local por defecto del proveedor. Contrato compartido con Aurora (loopback 54800).
+export const DEFAULT_PORT = 54800;
+
 export function validateOrigins(origins) {
   if (!Array.isArray(origins) || origins.length > 8) throw new Error('Indica hasta ocho direcciones de frontend.');
   return [...new Set(origins.map(value => {
@@ -24,7 +27,7 @@ export async function loadConfig() {
     if (error.code !== 'ENOENT') throw new Error('No se pudo leer la configuración local.');
   }
   return {
-    port: 54800,
+    port: DEFAULT_PORT,
     allowedOrigins: validateOrigins(saved.allowedOrigins || ['http://localhost:4321', 'http://127.0.0.1:4321', 'http://localhost:4322', 'http://127.0.0.1:4322'])
   };
 }
