@@ -7,11 +7,13 @@
  *   mise build    Comprueba la sintaxis de todos los scripts y la resolución de dependencias.
  *   mise check    Verifica entorno y configuración local, en solo lectura.
  *   mise test     Ejecuta las pruebas unitarias de los módulos puros.
- *   mise release  Verifica la preparación para distribución local; nunca publica.
- *   mise publish  Verificación de publicación; solo publica con autorización expresa.
  *
  *   --plan   Muestra lo que se ejecutaría. No ejecuta, no escribe ni consulta la red.
- *   --check  Solo lectura. Válido en publish.
+ *
+ * El proveedor es una utilidad local sin canal de publicación: no expone
+ * `release` ni `publish`. Esas tareas se declaran únicamente para responder con
+ * un error explícito en lugar de dejar que la configuración global de Mise las
+ * interprete con su implementación genérica.
  *
  * La raíz del repositorio se resuelve desde la ubicación de este archivo.
  */
@@ -25,16 +27,16 @@ import {resolveGeminiBinary} from './gemini-binary.mjs';
 const scriptDirectory = import.meta.dir ?? dirname(fileURLToPath(import.meta.url));
 const root = resolve(scriptDirectory, '..');
 const scriptsDirectory = join(root, 'scripts');
-const taskNames = ['dev', 'build', 'check', 'test', 'release', 'publish'];
+const taskNames = ['dev', 'build', 'check', 'test'];
+const unavailableTasks = ['release', 'publish'];
 
 interface Options {
   plan: boolean;
   check: boolean;
-  channel: string;
   args: string[];
 }
 
-const emptyOptions = (): Options => ({plan: false, check: false, channel: '', args: []});
+const emptyOptions = (): Options => ({plan: false, check: false, args: []});
 
 function packageInfo(): {name: string; version: string} {
   const file = join(root, 'package.json');
@@ -57,19 +59,15 @@ function parseArgs(argv: string[]): {task: string; options: Options} {
   }
 
   let task = '';
-  if (process.env.MISE_TASK_NAME && taskNames.includes(process.env.MISE_TASK_NAME)) {
+  const known = [...taskNames, ...unavailableTasks];
+  if (process.env.MISE_TASK_NAME && known.includes(process.env.MISE_TASK_NAME)) {
     task = process.env.MISE_TASK_NAME;
   }
-  if (!task && positional.length && taskNames.includes(positional[0])) {
+  if (!task && positional.length && known.includes(positional[0])) {
     task = positional.shift() as string;
   }
   if (!task) task = 'dev';
 
-  if (positional.length) {
-    const first = positional.shift() as string;
-    if (first === 'github') options.channel = first;
-    else options.args.push(first);
-  }
   options.args.push(...positional);
 
   return {task, options};
@@ -183,52 +181,10 @@ function testTask(options: Options): number {
   return status;
 }
 
-async function releaseTask(options: Options): Promise<number> {
-  const {name, version} = packageInfo();
-  console.log(`[mise] release ${name} v${version}: preparación local, sin publicación`);
-  const built = buildTask(options);
-  const checked = await checkTask(options);
-  if (options.plan) return built === 0 && checked === 0 ? 0 : 1;
-  if (built === 0 && checked === 0) {
-    console.log('[mise] Preparación local verificada. No se ha publicado ni etiquetado nada.');
-  }
-  return built === 0 ? checked : built;
-}
-
-async function publishTask(options: Options): Promise<number> {
-  const {name, version} = packageInfo();
-  const tag = `v${version}`;
-  const channel = options.channel || 'github';
-
-  if (options.check) {
-    console.log(`[mise preflight] Requisitos de publicación de ${name} v${version}`);
-    const git = (args: string[]) => spawnSync('git', args, {cwd: root, encoding: 'utf8', shell: false}).stdout.trim();
-    const branch = git(['branch', '--show-current']);
-    const status = git(['status', '--porcelain']);
-    const tagExists = git(['tag', '-l', tag]) === tag;
-    const remote = git(['remote', 'get-url', 'origin']);
-    const gh = spawnSync('gh', ['--version'], {cwd: root, encoding: 'utf8', shell: false});
-
-    console.log(`  - Rama actual: ${branch || 'desconocida'}`);
-    console.log(`  - Cambios sin confirmar: ${status ? 'Sí' : 'No'}`);
-    console.log(`  - Tag esperado: ${tag} (${tagExists ? 'Existe' : 'No creado'})`);
-    console.log(`  - Remoto origin: ${remote || 'no configurado'}`);
-    console.log(`  - GitHub CLI: ${gh.status === 0 ? 'disponible' : 'no disponible'}`);
-    console.log('  - Nota: utilidad complementaria sin mantenimiento activo; la publicación es manual.');
-    return 0;
-  }
-
-  if (options.plan) {
-    console.log(`[plan] Publicación prevista de ${name} v${version} en GitHub Releases (${channel}):`);
-    console.log(`  1. Verificar que el árbol de trabajo está limpio y en la rama main.`);
-    console.log(`  2. Crear el tag ${tag} sobre el commit validado.`);
-    console.log(`  3. Publicar las notas de la versión y el código fuente asociado.`);
-    console.log('[plan] No se ejecuta ninguna acción, no se escribe y no se consulta la red.');
-    return 0;
-  }
-
+function unavailableTask(task: string): never {
   throw new Error(
-    'La publicación no está automatizada en este proyecto. Ejecuta "mise publish --check" para la verificación o "mise publish --plan" para ver el plan; publicar requiere autorización expresa y una acción manual.'
+    `Aurora Gemini Provider es una utilidad local sin canal de publicación: no tiene tarea \`${task}\`. ` +
+      `Usa mise dev, mise build, mise check o mise test.`,
   );
 }
 
@@ -236,11 +192,11 @@ async function main(): Promise<number> {
   const {task, options} = parseArgs(process.argv.slice(2));
   const {name, version} = packageInfo();
 
-  if (options.channel && task !== 'publish') {
-    throw new Error(`El canal solo es válido en publish.`);
-  }
-  if (options.check && task !== 'publish') {
-    throw new Error(`--check solo es válido en publish.`);
+  if (options.check) {
+    throw new Error(
+      'Este proyecto no tiene tarea de publicación, así que `--check` no aplica a ninguna tarea. ' +
+        'Usa `--plan` para ver lo que se ejecutaría sin ejecutar nada.',
+    );
   }
 
   switch (task) {
@@ -258,9 +214,8 @@ async function main(): Promise<number> {
       console.log(`[mise] test ${name} v${version}: pruebas unitarias`);
       return testTask(options);
     case 'release':
-      return await releaseTask(options);
     case 'publish':
-      return await publishTask(options);
+      return unavailableTask(task);
     default:
       throw new Error(`Tarea desconocida: ${task}. Usa ${taskNames.join(', ')}.`);
   }

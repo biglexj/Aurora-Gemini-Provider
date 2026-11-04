@@ -23,15 +23,14 @@ Mise es la entrada principal. El despachador es `scripts/mise-task.ts` y todas l
 | `mise build` | Comprueba la sintaxis de todos los scripts y que `sharp` se resuelve. | No |
 | `mise check` | Verifica Node, `sharp`, el binario `agy`/`gemini` y los orígenes permitidos. | No |
 | `mise test` | Ejecuta las pruebas unitarias de `scripts/provider.test.mjs`. | No |
-| `mise release` | Verifica la preparación local (`build` + `check`). | No |
-| `mise publish` | Verificación de publicación; sin `--check` ni `--plan` se niega a publicar. | Solo con acción manual autorizada |
+
+El proveedor es una utilidad local sin canal de publicación: no expone `release` ni `publish`. Esas tareas responden con un error explícito para que nadie las ejecute esperando un resultado.
 
 Opciones:
 
 - `--plan`: muestra lo que se ejecutaría. No ejecuta, no escribe ni consulta la red. Válido en todas las tareas.
-- `--check`: solo lectura. Válido únicamente en `publish`.
 
-Los alias de `package.json` delegan en el mismo despachador (`npm run build`, `npm run check`, `npm test`, `npm run release`, `npm run publish`). `npm start` y `npm run dev` ejecutan el servidor directamente con Node.js, sin depender de Bun.
+Los alias de `package.json` delegan en el mismo despachador (`npm run build`, `npm run check`, `npm test`). `npm start` y `npm run dev` ejecutan el servidor directamente con Node.js, sin depender de Bun.
 
 ## Arranque en Windows
 
@@ -65,15 +64,13 @@ Los orígenes permitidos se guardan en `data/provider-config.json` y se editan d
 
 `data/`, `generated/`, `node_modules/` y `.env` quedan fuera de Git. Los lotes, las referencias y las imágenes existentes se conservan; no se borran al reiniciar el servicio.
 
-## Publicación
+## Distribución
 
-El proyecto es una utilidad complementaria sin mantenimiento activo: no hay canal de publicación automatizado.
+El proyecto es una utilidad complementaria sin mantenimiento activo: se distribuye como código, sin instalador ni artefacto propio.
 
-- `mise publish --check` informa de rama, cambios sin confirmar, tag esperado, remoto y disponibilidad de la CLI de GitHub. No escribe ni publica.
-- `mise publish --plan` muestra los pasos de una publicación manual. No los ejecuta.
-- Sin `--check` ni `--plan`, la tarea se niega a publicar y termina con código 1.
-
-Publicar exige autorización expresa, un tag explícito y una acción manual; `release` nunca publica.
+- No hay canal de publicación automatizado. `release` y `publish` no existen y responden con un error explícito.
+- La instalación es `npm install` en el repositorio y el arranque es `mise dev` o `npm start`.
+- La base de lanzamientos de Core no aplica: sin tarea `release` ni `publish` no hay versionado ni notas de publicación que mantener.
 
 ## Diagnóstico
 

@@ -42,14 +42,13 @@ Mise es la entrada principal de comandos. `mise.toml` declara todas las tareas s
 - `mise build`: Comprueba la sintaxis de todos los scripts y que `sharp` se resuelve, sin empaquetar.
 - `mise check`: Verifica Node, `sharp`, el binario `agy`/`gemini` y los orígenes permitidos, en solo lectura.
 - `mise test`: Ejecuta las pruebas unitarias de los módulos puros.
-- `mise release`: Verifica la preparación para distribución local. No publica.
-- `mise publish`: Verificación de los requisitos de publicación en GitHub Releases.
+
+El proveedor es una utilidad local sin canal de publicación: no expone `release` ni `publish`, y esas tareas responden con un error explícito. El servicio se distribuye como código.
 
 Opciones comunes:
 - `--plan`: Muestra lo que se ejecutaría, sin ejecutar, escribir ni consultar la red.
-- `--check`: Verificación en modo de solo lectura. Válida únicamente en `publish`.
 
-Los alias de `package.json` delegan en el mismo despachador: `npm run build`, `npm run check`, `npm test`, `npm run release` y `npm run publish`. `npm start` y `npm run dev` ejecutan el servidor directamente con Node.js.
+Los alias de `package.json` delegan en el mismo despachador: `npm run build`, `npm run check` y `npm test`. `npm start` y `npm run dev` ejecutan el servidor directamente con Node.js.
 
 ### Ejecución en Windows
 1. Haz doble clic en `Iniciar.cmd` o ejecuta en la terminal:
@@ -77,7 +76,7 @@ Consulta [API.md](API.md) para el detalle de endpoints, subida de referencias vi
 ## 🧭 Documentación del proyecto
 
 - [docs/architecture.md](docs/architecture.md): módulos, flujo de generación, cola y límites del contrato.
-- [docs/operations.md](docs/operations.md): requisitos, tareas, arranque por plataforma, configuración y política de publicación.
+- [docs/operations.md](docs/operations.md): requisitos, tareas, arranque por plataforma y configuración.
 - [API.md](API.md): contrato HTTP.
 
 ---

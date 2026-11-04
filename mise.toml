@@ -1,5 +1,9 @@
 # Tareas de Aurora Gemini Provider mediante Mise.
 # Estándar común: Docs/global/architecture/mise-command-standard.md
+# El proveedor es una utilidad local sin canal de publicación: no expone
+# `release` ni `publish`. Esas tareas se declaran solo para responder con un
+# error explícito y evitar que la configuración global de Mise las interprete
+# con su implementación genérica.
 # Todas las tareas apuntan al mismo despachador; `mise <tarea> --plan` no ejecuta acciones.
 
 [tasks.dev]
@@ -24,10 +28,10 @@ file = "scripts/mise-task.ts"
 
 [tasks.release]
 raw_args = true
-description = "Verificar la preparación para distribución local, sin publicar"
+description = "No disponible: el proveedor es una utilidad local sin distribución propia"
 file = "scripts/mise-task.ts"
 
 [tasks.publish]
 raw_args = true
-description = "Verificar los requisitos de publicación en GitHub Releases (--check y --plan no publican)"
+description = "No disponible: el proveedor no tiene canal de publicación"
 file = "scripts/mise-task.ts"

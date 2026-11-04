@@ -16,7 +16,7 @@ Aurora-Gemini-Provider/
 ├─ data/                    Trabajo local (lotes, trabajos, referencias, configuración). Fuera de Git.
 ├─ generated/               Imágenes generadas. Fuera de Git.
 ├─ API.md                   Contrato HTTP.
-├─ mise.toml                Tareas de Mise (dev, build, check, test, release, publish).
+├─ mise.toml                Tareas de Mise (dev, build, check, test).
 └─ Iniciar.cmd              Lanzador de doble clic para Windows.
 ```
 
