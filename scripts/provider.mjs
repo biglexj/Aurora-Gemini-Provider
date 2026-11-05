@@ -5,12 +5,12 @@ import {BatchQueue} from './batches.mjs';
 import {EXPRESSIONS, RATIOS, RESOLUTIONS} from './presets.mjs';
 import {storeReference, storedImage} from './assets.mjs';
 import {batchZip} from './zip.mjs';
-import {loadConfig, saveOrigins} from './config.mjs';
+import {loadConfig, saveOrigins, DEFAULT_PORT} from './config.mjs';
 import {IMAGE_JOB_JSON_MAX_BYTES, IMAGE_PROMPT_MAX_CHARS} from './prompt-limits.mjs';
 import {requestBody as body} from './request-body.mjs';
 
 const config = await loadConfig();
-const port = Number(process.argv[2] || 54800);
+const port = Number(process.argv[2] || DEFAULT_PORT);
 const allowedOrigins = new Set(process.env.LOCAL_IMAGE_ALLOWED_ORIGINS !== undefined ? process.env.LOCAL_IMAGE_ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean) : config.allowedOrigins);
 const queue = new BatchQueue({generate: generateNative, ready: () => generatorStatus().ready});
 await queue.initialize();

@@ -1,19 +1,33 @@
+# Tareas de Aurora Gemini Provider mediante Mise.
+# Estándar común: Docs/global/architecture/mise-command-standard.md
+# Todas las tareas apuntan al mismo despachador; `mise <tarea> --plan` no ejecuta acciones.
+
 [tasks.dev]
-description = "Inicia el servidor Aurora Gemini Provider en modo desarrollo"
-run = "bun run scripts/mise-task.ts dev"
 raw_args = true
+description = "Iniciar el servidor local del proveedor en 127.0.0.1:54800"
+file = "scripts/mise-task.ts"
 
 [tasks.build]
-description = "Comprueba sintaxis y coherencia sin empaquetar"
-run = "bun run scripts/mise-task.ts build"
 raw_args = true
+description = "Comprobar la sintaxis de todos los scripts y la resolución de dependencias, sin empaquetar"
+file = "scripts/mise-task.ts"
+
+[tasks.check]
+raw_args = true
+description = "Verificar entorno y configuración local (Node, sharp, binario agy/gemini, orígenes permitidos)"
+file = "scripts/mise-task.ts"
+
+[tasks.test]
+raw_args = true
+description = "Ejecutar las pruebas unitarias de los módulos puros"
+file = "scripts/mise-task.ts"
 
 [tasks.release]
-description = "Prepara el entorno y dependencias para distribución local"
-run = "bun run scripts/mise-task.ts release"
 raw_args = true
+description = "Verificar la preparación para distribución local, sin publicar"
+file = "scripts/mise-task.ts"
 
 [tasks.publish]
-description = "Verifica y gestiona publicación en GitHub Releases"
-run = "bun run scripts/mise-task.ts publish"
 raw_args = true
+description = "Verificar los requisitos de publicación en GitHub Releases (--check y --plan no publican)"
+file = "scripts/mise-task.ts"
