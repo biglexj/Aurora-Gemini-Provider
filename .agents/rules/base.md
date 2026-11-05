@@ -10,11 +10,11 @@ Consultar primero [Documentación Core](../../../Docs/README.md) y seleccionar s
 
 - [Calidad y entrega proporcionales](../../../Docs/global/quality/quality-baseline.md): build para ajustes visuales pequeños; pruebas pertinentes para elementos, lógica o páginas nuevos y cambios grandes; revisión acotada para documentación.
 - [Procesos según alcance](../../../Docs/global/documentation/process-workflow.md): no añadir fases, archivos ni nuevas aprobaciones por rutina a ajustes pequeños ya autorizados.
-- [Comandos mediante Mise](../../../Docs/global/architecture/mise-command-standard.md): la interfaz de comandos es `mise dev|build|check|test|release|publish`; `--plan` no ejecuta ni escribe y `--check` solo lee.
+- [Comandos mediante Mise](../../../Docs/global/architecture/mise-command-standard.md): la interfaz de comandos es `mise dev|build|check|test`; `--plan` no ejecuta ni escribe.
 - [Scripts y alias de comandos](../../../Docs/global/architecture/command-scripts-standard.md): los scripts de `package.json` delegan en `scripts/mise-task.ts`; no reimplementan la tarea.
 - [Organización de proyectos y carpetas](../../../Docs/global/architecture/project-structure.md): `scripts/` para la implementación, `docs/` para los contratos y el mapa local.
 - [Modelos de IA](../../../Docs/features/ai-models/README.md): el motor es la CLI local `agy` / `gemini`; no hay catálogo de modelos en estas reglas.
-- [Base de lanzamientos](../../../Docs/global/releases/release-baseline.md) y [protocolo de lanzamiento](../../../Docs/global/releases/protocolo_lanzamiento_actualizacion.md): `release` prepara en local y nunca publica; `publish` exige autorización expresa.
+- [Base de lanzamientos](../../../Docs/global/releases/release-baseline.md) y [protocolo de lanzamiento](../../../Docs/global/releases/protocolo_lanzamiento_actualizacion.md): no aplican; el proveedor no tiene tarea `release` ni `publish` ni distribución propia.
 - [Textos de interfaz](../../../Docs/global/design/interface-writing.md): aplica a los mensajes de la API y a los textos entregados al usuario final.
 - [Diagnósticos reutilizables](../../../Docs/troubleshooting/README.md) y [promoción a Core](../../../Docs/global/documentation/core-promotion-workflow.md): documentar en Core los fallos confirmados o aprendizajes generalizables y enlazarlos desde el proyecto; mantener locales los detalles exclusivos.
 - [Estilo de comunicación](../../../Docs/global/agents/communication-style.md): Scientific Elegant en los informes de trabajo; el resultado va primero.
@@ -42,15 +42,15 @@ Proveedor personal de imágenes para Aurora, impulsado por la CLI de Gemini / An
 
 ## Decisiones locales
 
-- Interfaz de comandos: Mise. `mise.toml` declara `dev`, `build`, `check`, `test`, `release` y `publish` sobre un único despachador, `scripts/mise-task.ts`. `release` no publica y `publish` no publica sin autorización expresa.
+- Interfaz de comandos: Mise. `mise.toml` declara `dev`, `build`, `check` y `test` sobre un único despachador, `scripts/mise-task.ts`. El proveedor es una utilidad local: no expone `release` ni `publish`, y esas tareas fallan con un mensaje explícito.
 - `Iniciar.cmd` se conserva como lanzador de doble clic en Windows: delega en `mise dev` y usa Node.js como respaldo. Está documentado en el README.
 - Los alias de `package.json` delegan en el despachador; `npm start` y `npm run dev` ejecutan el servidor con Node.js.
 - Distribución: el servicio se distribuye como código, sin empaquetado ni instalador. `.gitignore` excluye `data/`, `generated/`, `node_modules/`, `.env` y `AuroraGeminiProvider.exe`.
-- Publicación: no hay canal automatizado. `mise publish --check` verifica en solo lectura y `mise publish --plan` muestra el plan; la publicación es manual y exige autorización expresa.
+- Publicación: no hay canal automatizado ni previsto. El servicio se distribuye como código, sin instalador ni artefacto propio; no se crean tags ni se publican versiones.
 - Pruebas: `scripts/provider.test.mjs` cubre los módulos puros (límites, papeles de referencia, proporciones, cuerpo de la petición y orígenes). Se ejecuta con `mise test` o `npm test`.
 
 ## Documentación local
 
 - [API.md](../../API.md): contrato HTTP del servicio.
 - [docs/architecture.md](../../docs/architecture.md): mapa de módulos, flujo de generación, cola y límites.
-- [docs/operations.md](../../docs/operations.md): requisitos, tareas, arranque por plataforma, configuración y política de publicación.
+- [docs/operations.md](../../docs/operations.md): requisitos, tareas, arranque por plataforma y configuración.
